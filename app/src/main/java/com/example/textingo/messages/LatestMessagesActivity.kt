@@ -6,23 +6,76 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.example.textingo.R
+import com.example.textingo.adapters.LatestMessageAdapter
+import com.example.textingo.constants.Constants
 import com.example.textingo.login.RegisterActivity
+import com.example.textingo.models.ChatMessage
+import com.example.textingo.models.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_latest_messages.*
 
 class LatestMessagesActivity : AppCompatActivity() {
+
+    private lateinit var currentUser: User
+    private lateinit var latestMessagesList: ArrayList<ChatMessage>
+    private lateinit var latestMessagesMap: HashMap<String, ChatMessage>
+    private lateinit var adapter: LatestMessageAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_messages)
 
-        verifyUserIsLoggedIn()
+        if(intent.hasExtra(Constants.CURRENT_USER_KEY)){
+            currentUser = intent.getParcelableExtra<User>(Constants.CURRENT_USER_KEY)!!
+        }
+
+        latestMessagesList = ArrayList<ChatMessage>()
+        latestMessagesMap = HashMap<String, ChatMessage>()
+
+        adapter = LatestMessageAdapter(this, latestMessagesList)
+
+        listenForLatestMessages()
+
+
+
     }
 
-    private fun verifyUserIsLoggedIn(){
-        val uid = FirebaseAuth.getInstance().uid
-        if(uid == null){
-            val intent = Intent(this, RegisterActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
+    private fun listenForLatestMessages() {
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/latest-messages/$fromId")
+        ref.addChildEventListener(object: ChildEventListener {
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(ChatMessage::class.java) ?: return
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessages()
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(ChatMessage::class.java) ?: return
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessages()
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
+    private fun refreshRecyclerViewMessages() {
+        latestMessagesList.clear()
+        latestMessagesMap.values.forEach {
+            latestMessagesList.add(it)
         }
     }
 
@@ -35,6 +88,7 @@ class LatestMessagesActivity : AppCompatActivity() {
         when(item.itemId) {
             R.id.menu_new_message -> {
                 val intent = Intent(this, NewMessageActivity::class.java)
+                intent.putExtra(Constants.CURRENT_USER_KEY_ADAPTER, currentUser)
                 startActivity(intent)
             }
             R.id.menu_sign_out -> {

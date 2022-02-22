@@ -1,30 +1,28 @@
 package com.example.textingo.adapters
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.textingo.constants.Constants
 import com.example.textingo.R
+import com.example.textingo.constants.Constants
 import com.example.textingo.messages.ChatLogActivity
+import com.example.textingo.models.ChatMessage
 import com.example.textingo.models.User
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.user_row_new_message.view.*
+import kotlinx.android.synthetic.main.latest_message_row.view.*
 
-
-open class NewMessageAdapter(
+class LatestMessageAdapter(
     private val context: Context,
-    private var list: ArrayList<User>,
-    private var currentUser: User
+    private var list: ArrayList<ChatMessage>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return MyViewHolder(
+        return LatestMessageAdapter.MyViewHolder(
             LayoutInflater.from(context).inflate(
-                R.layout.user_row_new_message,
+                R.layout.latest_message_row,
                 parent,
                 false
             )
@@ -34,17 +32,14 @@ open class NewMessageAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
 
-        if(holder is MyViewHolder){
-            val bitmap = model.profileImageUrl
-            val username = model.username
-            holder.itemView.username_textview_new_message.text = username
-            Picasso.get().load(bitmap).into(holder.itemView.imageview_new_message)
+        if(holder is LatestMessageAdapter.MyViewHolder){
+
+            if(holder is MyViewHolder){
+                holder.itemView.message_textview_latest_message.text = model.text
+            }
 
             holder.itemView.setOnClickListener {
-                val intent = Intent(context, ChatLogActivity::class.java)
-                intent.putExtra(Constants.NEW_MESSAGE_USER_KEY, model)
-                context.startActivity(intent)
-                (context as Activity).finish()
+                // TODO START ChatLogActivity
             }
         }
     }
@@ -54,5 +49,4 @@ open class NewMessageAdapter(
     }
 
     private class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
 }

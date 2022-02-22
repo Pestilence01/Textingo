@@ -17,22 +17,46 @@ class ChatLogActivity : AppCompatActivity() {
     var receiverRoom: String? = null
     var senderRoom: String? = null
 
-    val mDbRef = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference()
+    private val mDbRefUsers = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("users")
+    private val mDbRefChats = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("chats")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_log)
 
-        val user: User = intent.getParcelableExtra<User>(Constants.NEW_MESSAGE_USER_KEY)!!
+        val receiver: User = intent.getParcelableExtra<User>(Constants.NEW_MESSAGE_USER_KEY)!!
 
-        val receiverUid = user.uid.toString()
+
+
+
+        val receiverUid = receiver.uid.toString()
         val senderUid = FirebaseAuth.getInstance().uid.toString()
+
+        var senderUrl: String = ""
+
+
+
+        mDbRefUsers.child(senderUid).addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val currentUser = snapshot.getValue(User::class.java)
+                senderUrl = currentUser!!.profileImageUrl
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
+
+
 
         senderRoom = receiverUid + senderUid
         receiverRoom = senderUid + receiverUid
 
 
-        supportActionBar?.title = user.username.toString()
+        supportActionBar?.title = receiver.username.toString()
 
         val messageList: ArrayList<ChatMessage> = ArrayList()
 
@@ -40,7 +64,7 @@ class ChatLogActivity : AppCompatActivity() {
 
         recyclerview_chat_log.adapter = chatAdapter
 
-        mDbRef.child("chats").child(senderRoom!!).child("messages")
+        mDbRefChats.child(senderRoom!!).child("messages")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -60,12 +84,12 @@ class ChatLogActivity : AppCompatActivity() {
             })
 
         send_button_chat_log.setOnClickListener {
-            performSendMessage()
+            performSendMessage(receiver.profileImageUrl, senderUrl)
         }
     }
 
 
-    private fun performSendMessage() {
+    private fun performSendMessage(url1: String, url2: String) {
         val text = edittext_chat_log.text.toString()
 
         val fromId = FirebaseAuth.getInstance().uid
@@ -74,13 +98,19 @@ class ChatLogActivity : AppCompatActivity() {
 
         if (fromId == null) return
 
-        val chatMessage = ChatMessage(text, fromId, toId, System.currentTimeMillis() / 1000)
+        val chatMessage = ChatMessage(text, fromId, toId, System.currentTimeMillis() / 1000, url2, url1)
 
-        mDbRef.child("chats").child(senderRoom!!).child("messages").push().setValue(chatMessage).addOnSuccessListener {
-            mDbRef.child("chats").child(receiverRoom!!).child("messages").push().setValue(chatMessage)
+        mDbRefChats.child(senderRoom!!).child("messages").push().setValue(chatMessage).addOnSuccessListener {
+            mDbRefChats.child(receiverRoom!!).child("messages").push().setValue(chatMessage)
         }
 
         edittext_chat_log.text.clear()
+
+        val latestMessageRef = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/latest-messages/$fromId/$toId")
+        latestMessageRef.setValue(chatMessage)
+
+        val latestMessageToRef = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/latest-messages/$toId/$fromId")
+        latestMessageToRef.setValue(chatMessage)
 
     }
 }

@@ -111,11 +111,12 @@ class RegisterActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("/users/$uid")
 
 
-        val user = User(uid.toString(), username_edittext_register.text.toString(), profileImageURL)
+        val user = User(email_edittext_register.text.toString(), uid.toString(), username_edittext_register.text.toString(), profileImageURL)
 
         ref.setValue(user).addOnSuccessListener {
             Toast.makeText(this, "You have successfully registered!", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, LatestMessagesActivity::class.java)
+            intent.putExtra(Constants.CURRENT_USER_KEY, user)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }.addOnFailureListener {

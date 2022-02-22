@@ -20,7 +20,7 @@
         app:layout_constraintStart_toEndOf="@+id/imageViewFromRow"
         app:layout_constraintTop_toTopOf="@+id/imageViewFromRow" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewFromRow"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -28,7 +28,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
