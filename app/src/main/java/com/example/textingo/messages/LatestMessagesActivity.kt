@@ -3,6 +3,7 @@ package com.example.textingo.messages
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.example.textingo.R
@@ -12,10 +13,7 @@ import com.example.textingo.login.RegisterActivity
 import com.example.textingo.models.ChatMessage
 import com.example.textingo.models.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_latest_messages.*
 
 class LatestMessagesActivity : AppCompatActivity() {
@@ -37,12 +35,28 @@ class LatestMessagesActivity : AppCompatActivity() {
         latestMessagesMap = HashMap<String, ChatMessage>()
 
         adapter = LatestMessageAdapter(this, latestMessagesList)
+        recyclerview_latest_messages.adapter = adapter
 
         listenForLatestMessages()
 
 
 
     }
+
+    override fun onResume() {
+        FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("users").child(FirebaseAuth.getInstance().uid.toString()).addListenerForSingleValueEvent(object:
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                currentUser = snapshot.getValue(User::class.java)!!
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+            })
+        super.onResume()
+    }
+
 
     private fun listenForLatestMessages() {
         val fromId = FirebaseAuth.getInstance().uid
@@ -77,6 +91,8 @@ class LatestMessagesActivity : AppCompatActivity() {
         latestMessagesMap.values.forEach {
             latestMessagesList.add(it)
         }
+        adapter.notifyDataSetChanged()
+        Log.i("size: ", latestMessagesList.get(0).text)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
