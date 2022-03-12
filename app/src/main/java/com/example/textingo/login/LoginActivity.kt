@@ -25,8 +25,8 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        back_to_register_textview.setOnClickListener{
-            finish()
+        login_click_to_register.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 

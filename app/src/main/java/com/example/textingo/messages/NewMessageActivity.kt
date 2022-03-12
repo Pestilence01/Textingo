@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_latest_messages.*
 import kotlinx.android.synthetic.main.activity_new_message.*
 
 
@@ -28,7 +29,7 @@ class NewMessageActivity : AppCompatActivity() {
             currentUser = intent.getParcelableExtra<User>(Constants.CURRENT_USER_KEY_ADAPTER)!!
         }
 
-        supportActionBar!!.title = "Select User"
+        setupActionBar()
 
         recyclerview_newmessage.setHasFixedSize(true)
 
@@ -37,6 +38,21 @@ class NewMessageActivity : AppCompatActivity() {
         fetchUsers()
 
 
+
+    }
+
+    private fun setupActionBar() {
+
+        setSupportActionBar(toolbar_new_message)
+
+        val actionBar = supportActionBar
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
+        }
+
+        toolbar_new_message.setNavigationOnClickListener { onBackPressed() }
 
     }
 

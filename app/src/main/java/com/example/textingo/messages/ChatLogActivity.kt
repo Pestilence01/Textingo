@@ -11,11 +11,12 @@ import com.example.textingo.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_chat_log.*
+import kotlinx.android.synthetic.main.activity_new_message.*
 
 class ChatLogActivity : AppCompatActivity() {
 
-    var receiverRoom: String? = null
-    var senderRoom: String? = null
+    private var receiverRoom: String? = null
+    private var senderRoom: String? = null
 
     private val mDbRefUsers = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("users")
     private val mDbRefChats = FirebaseDatabase.getInstance("https://textingo-default-rtdb.europe-west1.firebasedatabase.app/").getReference("chats")
@@ -26,6 +27,9 @@ class ChatLogActivity : AppCompatActivity() {
 
         val receiver: User = intent.getParcelableExtra<User>(Constants.NEW_MESSAGE_USER_KEY)!!
 
+        setupActionBar()
+
+        tv_tool_bar_chat_log.text = "Talking to: ${receiver.username}"
 
 
 
@@ -86,6 +90,21 @@ class ChatLogActivity : AppCompatActivity() {
         send_button_chat_log.setOnClickListener {
             performSendMessage(receiver.profileImageUrl, senderUrl)
         }
+    }
+
+    private fun setupActionBar() {
+
+        setSupportActionBar(toolbar_chat_log)
+
+        val actionBar = supportActionBar
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_white_color_back_24dp)
+        }
+
+        toolbar_chat_log.setNavigationOnClickListener { onBackPressed() }
+
     }
 
 

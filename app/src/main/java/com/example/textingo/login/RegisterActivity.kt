@@ -46,6 +46,10 @@ class RegisterActivity : AppCompatActivity() {
             intent.type = "image/*"
             startActivityForResult(intent, Constants.CIV_SELECT_PHOTO_REGISTER_REQUEST_CODE)
         }
+
+        register_click_to_login.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -115,10 +119,7 @@ class RegisterActivity : AppCompatActivity() {
 
         ref.setValue(user).addOnSuccessListener {
             Toast.makeText(this, "You have successfully registered!", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, LatestMessagesActivity::class.java)
-            intent.putExtra(Constants.CURRENT_USER_KEY, user)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
+            finish()
         }.addOnFailureListener {
             Toast.makeText(this, "There was an error during registration.", Toast.LENGTH_SHORT).show()
         }

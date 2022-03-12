@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Textingo</string>
+    <string name="str_register"><u>Register</u>.</string>
+    <string name="str_login"><u>Login</u></string>
 </resources>

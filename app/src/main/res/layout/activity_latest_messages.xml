@@ -6,6 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".messages.LatestMessagesActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_latest_message"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:src="@drawable/logo_white"/>
+
+        <TextView
+            android:id="@+id/latest_message_toolbar_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingStart="5dp"
+            android:paddingEnd="0dp"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_latest_messages"
         android:layout_width="0dp"
@@ -14,7 +42,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_latest_message" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_new_message"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/colorPrimary"
+        app:borderWidth="0dp"
+        app:tint="@color/white"
+        app:fabCustomSize="65dp"
+        android:scaleType="center"
+        android:src="@drawable/vector_plus"
+        android:tint="@color/white"
+        app:backgroundTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

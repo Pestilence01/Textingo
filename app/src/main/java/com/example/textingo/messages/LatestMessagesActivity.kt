@@ -9,6 +9,7 @@ import android.view.MenuItem
 import com.example.textingo.R
 import com.example.textingo.adapters.LatestMessageAdapter
 import com.example.textingo.constants.Constants
+import com.example.textingo.login.LoginActivity
 import com.example.textingo.login.RegisterActivity
 import com.example.textingo.models.ChatMessage
 import com.example.textingo.models.User
@@ -31,6 +32,11 @@ class LatestMessagesActivity : AppCompatActivity() {
             currentUser = intent.getParcelableExtra<User>(Constants.CURRENT_USER_KEY)!!
         }
 
+        setupActionBar()
+
+
+
+
         latestMessagesList = ArrayList<ChatMessage>()
         latestMessagesMap = HashMap<String, ChatMessage>()
 
@@ -39,7 +45,21 @@ class LatestMessagesActivity : AppCompatActivity() {
 
         listenForLatestMessages()
 
+        fab_new_message.setOnClickListener {
+            val intent = Intent(this, NewMessageActivity::class.java)
+            intent.putExtra(Constants.CURRENT_USER_KEY_ADAPTER, currentUser)
+            startActivity(intent)
+        }
 
+
+
+    }
+
+    private fun setupActionBar() {
+
+        setSupportActionBar(toolbar_latest_message)
+
+        val actionBar = supportActionBar
 
     }
 
@@ -92,7 +112,6 @@ class LatestMessagesActivity : AppCompatActivity() {
             latestMessagesList.add(it)
         }
         adapter.notifyDataSetChanged()
-        Log.i("size: ", latestMessagesList.get(0).text)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -102,14 +121,9 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_new_message -> {
-                val intent = Intent(this, NewMessageActivity::class.java)
-                intent.putExtra(Constants.CURRENT_USER_KEY_ADAPTER, currentUser)
-                startActivity(intent)
-            }
             R.id.menu_sign_out -> {
                 FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this, RegisterActivity::class.java)
+                val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }

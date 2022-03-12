@@ -10,15 +10,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Textingo">
         <activity
+            android:name=".login.SplashScreenActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBarLighter">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <activity
             android:name=".messages.ChatLogActivity"
-            android:exported="false" >
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBarDarker">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".messages.LatestMessagesActivity" />
         </activity>
         <activity
             android:name=".messages.NewMessageActivity"
-            android:exported="false">
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBarLighter">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".messages.LatestMessagesActivity" />
@@ -26,24 +41,19 @@
         <activity
             android:name=".messages.LatestMessagesActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBarLighter"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".login.LoginActivity"
-            android:exported="false"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBarLighter">
+        </activity>
         <activity
             android:name=".login.RegisterActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme.NoActionBarLighter"></activity>
     </application>
 
 </manifest>
